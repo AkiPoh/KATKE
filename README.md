@@ -2,6 +2,10 @@
 
 A permissive-open-source ECAD desktop and mobile app for PCB, schematic and symbol design (currently in early development)
 
+## LICENSE
+
+Apache-2.0
+
 ## MISSION STATEMENT
 
 To make useful and functional software available for all.
@@ -18,7 +22,9 @@ Our journey starting with the goal of bringing a fully fledged ECAD software sui
 ## PROPOSED TECH STACK
 
 Rust
+
 WebAssembly
+
 wgpu
 
 ## DEVELOPMENT PHASE OVERVIEWS
