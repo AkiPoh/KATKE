@@ -18,6 +18,9 @@ Our journey starting with the goal of bringing a fully fledged ECAD software sui
 - [ ] Everything-is-a-panel architecture for the UI
 - [ ] Spatial “3D” translucent frosted glass UI, enabling quick switching between panels
 - [ ] Always fully portable projects, symbols and documentation
+- [ ] Built-in symbol manager and library, with manual, and automatic rule based categorising, sorting, and search
+- [ ] Melted style PCB traces
+- [ ] Git style version control (more of a long-term ambition)
 
 ## PROPOSED TECH STACK
 
