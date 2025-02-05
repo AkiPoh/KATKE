@@ -26,6 +26,7 @@ wgpu
 - [ ] Always fully portable projects, symbols and documentation
 - [ ] Built-in symbol library and manager, with manual, and automatic rule based categorising, sorting, and search
 - [ ] Melted style PCB traces
+- [ ] Built-in (offline) documentation manager for symbols
 - [ ] Git style version control (more of a long-term ambition)
 - [ ] Native VR support (more of a long-term goal)
 - [ ] Native AR support (more of a long-term goal)
