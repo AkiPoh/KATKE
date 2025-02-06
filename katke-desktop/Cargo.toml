@@ -2,5 +2,18 @@
 name = "katke-desktop"
 version = "0.1.0"
 edition = "2021"
+description = "Desktop frontend for KATKE - A permissive-open-source ECAD application"
+license = "Apache-2.0"
+repository = "https://github.com/AkiPoh/KATKE"
 
 [dependencies]
+
+# Graphics API - Provides modern graphics API abstraction
+wgpu.workspace = true
+
+# Window creation and event handling
+winit.workspace = true
+
+# Async runtime for wgpu intialization
+# Required because wgpu uses async operations for setup
+pollster.workspace = true   
