@@ -1,20 +1,29 @@
 [workspace]
 
 members = [
-    #"katke-core"
+    ## Core logic and data structures
+    #"katke-core" 
 
-    #"katke-graphics",  # Combined UI and rendering (including panels system)
+    ## Combined UI and rendering (including panels system)
+    #"katke-graphics",  
 
-    #"katke-web",       # Web/WASM frontend
+    ## Web/WASM frontend
+    #"katke-web",       
 
-    "katke-desktop"    # Native desktop frontend
+    # Native desktop frontend
+    "katke-desktop"    
 ]
 
 resolver = "2"
 
 [workspace.dependencies]
 
-wgpu = "24.0.1"
-winit = "0.30.9"
-pollster = "0.4.0"
-env_logger = " 0.11.6"
+# Graphics API - Provides modern graphics API abstraction
+wgpu = "0.19.4" 
+
+# Window creation and event handling
+winit = "0.29.15"
+
+# Async runtime for wgpu intialization
+# Required because wgpu uses async operations for setup
+pollster = "0.3.0"

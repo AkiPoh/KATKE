@@ -50,6 +50,10 @@ Covers all of the official v0 versions
 - [ ] Schematic designer, with basic DRC
 - [ ] Project and symbol documentation manager
 
+#### PHASE 1 PROGRESS LOG BOOK
+- **2025-2-6:** WE CREATED A WINDOW WITH A PURPLE BACKGROUNG PEOPLE! At **MOST** 3 months till phase 2 is completed *100%*.
+  - [ ] Add documentation via comments to the "purple window" code
+
 ### KATKE DEVELOPMENT PHASE 1
 
 Covers all of the official v1 versions
