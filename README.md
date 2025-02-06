@@ -47,7 +47,7 @@ Covers all of the official v0 versions
 - [ ] Support for Chrome on Windows
 - [ ] Support for Windows as a portable app
 - [ ] Symbol designer
-- [ ] Schematic designer
+- [ ] Schematic designer, with basic DRC
 - [ ] Documentation manager
 
 ### KATKE DEVELOPMENT PHASE 1
