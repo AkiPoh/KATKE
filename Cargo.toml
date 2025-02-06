@@ -1,0 +1,20 @@
+[workspace]
+
+members = [
+    #"katke-core"
+
+    #"katke-graphics",  # Combined UI and rendering (including panels system)
+
+    #"katke-web",       # Web/WASM frontend
+
+    "katke-desktop"    # Native desktop frontend
+]
+
+resolver = "2"
+
+[workspace.dependencies]
+
+wgpu = "24.0.1"
+winit = "0.30.9"
+pollster = "0.4.0"
+env_logger = " 0.11.6"
