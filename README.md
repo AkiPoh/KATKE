@@ -48,7 +48,7 @@ Covers all of the official v0 versions
 - [ ] Support for Windows as a portable app
 - [ ] Symbol designer
 - [ ] Schematic designer
-- [ ] Project designer
+- [ ] Documentation manager
 
 ### KATKE DEVELOPMENT PHASE 1
 
