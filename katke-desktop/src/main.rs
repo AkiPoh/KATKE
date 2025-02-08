@@ -6,7 +6,8 @@ use winit::{
     event::{
 
         Event,
-        // - Is the enum that represents all possible events that can occur (window events, device events, etc.)
+        // - Is the enum that represents all possible events that can occur...
+        // (window events, device events, etc.)
         WindowEvent
         // - Specifically handles window-related events like resizing, closing, keyboard/mouse input, etc.
     },
@@ -23,7 +24,8 @@ async fn run() {
 
     // Create a new event loop to handle window events
     let event_loop = EventLoop::new().unwrap();
-        // - "unwrap()" crashes the application if operation fails; if operation succeeds no effect
+        // - "unwrap()" crashes the application if operation fails; if operation...
+        // succeeds no effect
 
     // Create and configure the application window
     let window = WindowBuilder::new()
@@ -137,7 +139,7 @@ async fn run() {
         //   similar to VSync in games avoiding frame tearing
 
         alpha_mode: surface_capabilities.alpha_modes[0],
-        // - Use first suppported transparency mode supported by the GPU, for handling transparency
+        // - Use first suppported transparency mode supported by the GPU for handling transparency
 
         view_formats: vec![],
         // - No additional format views needed
@@ -146,69 +148,111 @@ async fn run() {
         // - Number of frames GPU can prepare ahead
     };
 
+    // Configure the surface using our previosly established configuration settings
     surface.configure(&device, &config);
 
-    let window_ref = &window;
+    // Create a reference to our window, that we can use inside the event loop
+    let window_reference = &window;
+
+    // Run the event loop, and handle different events...
+    // also uses "move" to take ownership of any outside variables used
     event_loop.run(move |event, target| {
+
+        // Handle different events
         match event {
-            Event::WindowEvent {
-                event: WindowEvent::CloseRequested,
-                ..
-            } => {
+
+            // Handle window close request,
+            // ("..": ignore any other fields in WindowEvent)
+            Event::WindowEvent {event: WindowEvent::CloseRequested, ..} => {
+
+                // Terminate the loop to cleanly close our application
                 target.exit();
             }
-            Event::WindowEvent {
-                event: WindowEvent::Resized(new_size),
-                ..
-            } => {
-                config.width = new_size.width;
-                config.height = new_size.height;
+
+            // Handle window resizing, get new window dimensions to "window_new_size" 
+            // ("..": ignore any other fields in WindowEvent)
+            Event::WindowEvent {event: WindowEvent::Resized(window_new_size), .. } => {
+
+                //Update surface configuration with new window dimensions
+                config.width = window_new_size.width;
+                config.height = window_new_size.height;
+
+                // Tell GPU to create a new surface to match the new surface dimensions
                 surface.configure(&device, &config);
             }
+
+            // Handle event in which the event loop is about to enter a waiting state...
+            // after all pending events have been processed
             Event::AboutToWait => {
-                window_ref.request_redraw();
+
+                // Request a redraw of the window, triggering the RedrawRequested event
+                window_reference.request_redraw();
             }
-            Event::WindowEvent {
-                event: WindowEvent::RedrawRequested,
-                ..
-            } => {
+
+            // Handle window redraw requests
+            // ("..": ignore any other fields in WindowEvent)
+            Event::WindowEvent {event: WindowEvent::RedrawRequested, ..} => {
+
+                // Get the next frame to render to, from the surface
                 let frame = surface.get_current_texture().unwrap();
+                // - "unwrap()" crashes the application if operation fails; if operation succeeds no effect
+                
                 let view = frame.texture.create_view(&wgpu::TextureViewDescriptor::default());
 
                 let mut encoder = device.create_command_encoder(&wgpu::CommandEncoderDescriptor { 
+
                     label: Some("Render Encoder")
                 });
 
                 {
                     let _render_pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
+
                         label: Some("Render Pass"),
+
                         color_attachments: &[Some(wgpu::RenderPassColorAttachment {
+
                             view: &view,
+
                             resolve_target: None,
+
                             ops: wgpu::Operations {
+
                                 load: wgpu::LoadOp::Clear(wgpu::Color {
+
                                     r: 0.4, // Slightly purple background
+
                                     g: 0.1,
+
                                     b: 0.4,
+
                                     a: 1.0,
                                 }),
+
                                 store: wgpu::StoreOp::Store,
+
                             },
                         })],
+
                         depth_stencil_attachment: None,
+
                         timestamp_writes: None,
+
                         occlusion_query_set: None,
                     });
                 }
 
                 queue.submit(std::iter::once(encoder.finish()));
+
                 frame.present();
             }
+            
             _ => (),
         }
+
     }).unwrap();
 }
 
 fn main() {
+
     pollster::block_on(run());
 }
