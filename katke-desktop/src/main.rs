@@ -49,45 +49,101 @@ async fn run() {
     // a surface is part of the window we'll draw to
     let surface = instance.create_surface(&window).unwrap();
 
+    // Request a GPU from computer, that meets the specified requirements
+    let adapter = instance.request_adapter(&wgpu::RequestAdapterOptions {
 
-    let adapter = instance
-        .request_adapter(&wgpu::RequestAdapterOptions {
-            power_preference: wgpu::PowerPreference::default(),
-            force_fallback_adapter: false,
-            compatible_surface: Some(&surface),
+        power_preference: wgpu::PowerPreference::default(),
+        // - Request GPU with computer's default power profile
+
+        force_fallback_adapter: false,
+        // - Don't use software fallback if no GPU available
+
+        compatible_surface: Some(&surface),
+        // - GPU compatible with our surface
         })
-        .await
-        .unwrap();
 
-    let (device, queue) = adapter
-        .request_device(
-            &wgpu::DeviceDescriptor {
-                label: None,
-                required_features: wgpu::Features::empty(),
-                required_limits: wgpu::Limits::default(),
-            },
-            None,
+        .await
+        // - Waits here until operation completed
+
+        .unwrap()
+        // - Crashes the application if operation fails; if operation succeeds no effect
+        ;
+
+    // Request a connection to use the GPU ("device") and a way to send commands "queue"
+    let (device, queue) = adapter.request_device(&wgpu::DeviceDescriptor{
+            
+            // # "device":
+
+            label: None,
+            // - No debug label
+
+            required_features: wgpu::Features::empty(),
+            // - No special features required
+
+            required_limits: wgpu::Limits::default(),
+            // - Use default GPU resource limits
+        },
+        
+        // # "queue"
+
+        None,
+        // - No trace path for GPU command ("queue") debugging
         )
+
         .await
-        .unwrap();
+        // - Waits here until operation completed
 
-    let surface_caps = surface.get_capabilities(&adapter);
-    let surface_format = surface_caps
+        .unwrap()
+        // - Crashes the application if operation fails; if operation succeeds no effect
+        ;
+
+    // Get the capabilities of our surface (what formats/settings it supports)
+    let surface_capabilities = surface.get_capabilities(&adapter);
+
+    // Find the supported surface color format, prefer sRGB if available
+    let surface_color_format = surface_capabilities
+
         .formats
-        .iter()
-        .copied()
-        .find(|f| f.is_srgb())
-        .unwrap_or(surface_caps.formats[0]);
+        // - Get list of all the color formats supported by the GPU
 
+        .iter()
+        // - Iterate over all color formats from the list...
+
+        .copied()
+        // - Make copies of each each color format as we iterate
+
+        .find(|f| f.is_srgb())
+        // - Look for the first color format that supports sRGB
+
+        .unwrap_or(surface_capabilities.formats[0])
+        // - If no sRGB format found use first available format instead
+        ;
+
+    // Configure the surface for rendering
     let mut config = wgpu::SurfaceConfiguration {
+
         usage: wgpu::TextureUsages::RENDER_ATTACHMENT,
-        format: surface_format,
+        // - Tells GPU this surface is for directly drawing to
+
+        format: surface_color_format,
+        // - Use the color format we selected 
+
         width: size.width,
         height: size.height,
+        // - Tell GPU our window's size in pixels
+
         present_mode: wgpu::PresentMode::Fifo,
-        alpha_mode: surface_caps.alpha_modes[0],
+        // - Display rendered frames in order, synchronized with screen refresh rate...
+        //   similar to VSync in games avoiding frame tearing
+
+        alpha_mode: surface_capabilities.alpha_modes[0],
+        // - Use first suppported transparency mode supported by the GPU, for handling transparency
+
         view_formats: vec![],
+        // - No additional format views needed
+
         desired_maximum_frame_latency: 2,
+        // - Number of frames GPU can prepare ahead
     };
 
     surface.configure(&device, &config);
