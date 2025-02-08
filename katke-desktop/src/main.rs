@@ -1,20 +1,55 @@
+// Window management and event handling depencies using the "winit" crate
+// Winit provides cross-platform window creation and event handling
 use winit::{
-    event::{Event, WindowEvent},
+
+    // Import types for handling system and window events
+    event::{
+
+        Event,
+        // - Is the enum that represents all possible events that can occur (window events, device events, etc.)
+        WindowEvent
+        // - Specifically handles window-related events like resizing, closing, keyboard/mouse input, etc.
+    },
+
+    // Import core event handling system
     event_loop::EventLoop,
+
+    // Import builder pattern for window creation and configuration
     window::WindowBuilder,
 };
 
+// Main async function that sets up and runs the application
 async fn run() {
-    let event_loop = EventLoop::new().unwrap();
-    let window = WindowBuilder::new()
-        .with_title("KATKE")
-        .build(&event_loop)
-        .unwrap();
 
+    // Create a new event loop to handle window events
+    let event_loop = EventLoop::new().unwrap();
+        // - "unwrap()" crashes the application if operation fails; if operation succeeds no effect
+
+    // Create and configure the application window
+    let window = WindowBuilder::new()
+
+        .with_title("KATKE")
+        // - Titles window
+
+        .build(&event_loop)
+        // - Connect with a reference to the "event_loop" variable
+
+        .unwrap()
+        // - Crashes the application if operation fails; if operation succeeds no effect
+        ;
+
+    // Create variable and get window's physical size in pixels
     let size = window.inner_size();
+
+    // Initialize a new wgpu instance with default settings,
+    // this is our connection to the GPU
     let instance = wgpu::Instance::new(wgpu::InstanceDescriptor::default());
 
+    // Create a surface for rendering,
+    // a surface is part of the window we'll draw to
     let surface = instance.create_surface(&window).unwrap();
+
+
     let adapter = instance
         .request_adapter(&wgpu::RequestAdapterOptions {
             power_preference: wgpu::PowerPreference::default(),
