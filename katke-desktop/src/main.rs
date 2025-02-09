@@ -144,7 +144,7 @@ async fn run() {
         view_formats: vec![],
         // - No additional format views needed
 
-        desired_maximum_frame_latency: 2,
+        desired_maximum_frame_latency: 1,
         // - Number of frames GPU can prepare ahead
     };
 
@@ -285,5 +285,5 @@ fn main() {
     // Start running our async program code in a synchronous context
     // This is needed because main() can't be async, but run() is
     pollster::block_on(run());
-    
+
 }
