@@ -197,62 +197,93 @@ async fn run() {
                 let frame = surface.get_current_texture().unwrap();
                 // - "unwrap()" crashes the application if operation fails; if operation succeeds no effect
                 
+                // Set up how we want to use this frame's texture for rendering,
+                // Creates a default view that lets us render to the entire texture
                 let view = frame.texture.create_view(&wgpu::TextureViewDescriptor::default());
 
-                let mut encoder = device.create_command_encoder(&wgpu::CommandEncoderDescriptor { 
+                // Create a new command recorder to store all the GPU commands until...
+                // we want to send them to the GPU all at once, to be executed
+                let mut encoder = device.create_command_encoder(&wgpu::CommandEncoderDescriptor {label: Some("Render Encoder")});
+                // - "label" name for debugging
 
-                    label: Some("Render Encoder")
-                });
-
+                // Create a new scope - this makes sure we finish setting up the render...
+                // pass before we try to submit our commands
                 {
+
+                    // Begin a render pass that describes how to render our frame
                     let _render_pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
 
                         label: Some("Render Pass"),
+                        // - Name for debugging
 
+                        // Configure how we want to handle color data in this render pass
                         color_attachments: &[Some(wgpu::RenderPassColorAttachment {
 
+                            // Reference the texture we're rendering to
                             view: &view,
 
                             resolve_target: None,
+                            // - We're not using anti-aliasing (edge smoothing),
+                            // so we don't need a seperate texture for the final image
 
+                            // Define operations for this color attachment
                             ops: wgpu::Operations {
 
+                                // Clear the screen and set to a color
                                 load: wgpu::LoadOp::Clear(wgpu::Color {
 
-                                    r: 0.4, // Slightly purple background
-
-                                    g: 0.1,
-
-                                    b: 0.4,
-
-                                    a: 1.0,
+                                    r: 0.4, // Red
+                                    g: 0.1, // Green
+                                    b: 0.4, // Blue
+                                    a: 1.0, // Alpha/'opacity'
+                                    // - Set to a purple background
                                 }),
 
+                                // Store the rendering results
                                 store: wgpu::StoreOp::Store,
 
                             },
                         })],
 
                         depth_stencil_attachment: None,
+                        // - Don't track which objects are in front of others
 
                         timestamp_writes: None,
+                        // - Don't measure how long rendering takes
 
                         occlusion_query_set: None,
+                        // - Don't check if objects are hidden behind other objects
                     });
                 }
 
+                // Submit the encoded commands to the GPU's command queue
                 queue.submit(std::iter::once(encoder.finish()));
 
+                // Present the rendered frame to the screen
                 frame.present();
+                
+            // End of RedrawRequested event handler
             }
             
+            //Catch-all to ignore any event types we haven't explicitly handled above,
+            // With our event handlers
             _ => (),
+        
         }
+        // - End of match statement for event types
 
     }).unwrap();
-}
+    // - End of event loop
+    // - "unwrap()" crashes the application if operation fails; if operation succeeds no effect
 
+}
+// - End of async run() function
+
+// Program entry point - this is where Rust begins executing the program
 fn main() {
 
+    // Start running our async program code in a synchronous context
+    // This is needed because main() can't be async, but run() is
     pollster::block_on(run());
+    
 }
